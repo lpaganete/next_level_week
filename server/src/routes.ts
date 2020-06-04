@@ -1,20 +1,16 @@
 import express from 'express';
-import knex from './database/connection'
+
+import PointsController from './controllers/pointsController';
+import ItemsController from './controllers/itemsController';
 
 const routes = express.Router(); //serve para desacoplar as rotas dos arquivos principal. P
+const pointsController = new PointsController();
+const itemsController = new ItemsController();
 
-routes.get('/items', async (request, response) => {
-    
-    const items = await knex('items').select('*'); //SELECT * FROM items
+//Listando os itens
+routes.get('/items', itemsController.index); 
 
-    const serializedItems =  items.map(item => { //map percorre todos os itens 
-        return {
-            title: item.title,
-            image_url: `http://localhost:3333/uploads/${item.image}`, //criando campo somente para trazer os itens
-        };
-    })
-
-    return response.json(serializedItems);
-});  
+//Criando novo ponto de coleta
+routes.post('/points', pointsController.create);
 
 export default routes; 
